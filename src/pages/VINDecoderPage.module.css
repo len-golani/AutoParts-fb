@@ -1,0 +1,190 @@
+/* VINDecoderPage.module.css */
+
+.page {
+  padding: var(--space-12) 0;
+}
+
+/* ── Page Header ──────────────────────────────────────────────────────── */
+.pageHeader {
+  max-width: 600px;
+  margin-bottom: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+/* ── Tabs ─────────────────────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.18s;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+}
+
+.tabActive {
+  background: var(--amber-glow) !important;
+  border-color: var(--border-amber) !important;
+  color: var(--amber) !important;
+}
+
+/* ── Scanner Card ─────────────────────────────────────────────────────── */
+.scannerCard {
+  padding: var(--space-8);
+  margin-bottom: var(--space-6);
+}
+
+.scannerHeader {
+  margin-bottom: var(--space-8);
+}
+
+.scannerTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.scannerSub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ── Manual Grid ──────────────────────────────────────────────────────── */
+.manualGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+@media (max-width: 768px) {
+  .manualGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-2);
+}
+
+.selectWrapper {
+  position: relative;
+}
+
+.selectChevron {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.manualCTA {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.manualNote {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── Result ───────────────────────────────────────────────────────────── */
+.result {
+  margin-bottom: var(--space-12);
+}
+
+/* ── Info Section ─────────────────────────────────────────────────────── */
+.infoSection {
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-8);
+}
+
+.infoTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+@media (max-width: 768px) {
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.infoCard {
+  padding: var(--space-5);
+}
+
+.infoPos {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-2);
+}
+
+.pos_amber { color: var(--amber); }
+.pos_ice { color: var(--ice); }
+.pos_success { color: var(--success); }
+
+.infoName {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.infoDesc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}

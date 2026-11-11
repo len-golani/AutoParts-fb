@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoParts — Session Summary & Full Project Plan</title>
+    <style>
+        :root {
+            --bg-primary: #0b0d12;
+            --bg-secondary: #151820;
+            --bg-tertiary: #1e222d;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #f59e0b;
+            --accent-hover: #d97706;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --border: #2a2f3d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+        header h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        header p { color: var(--text-secondary); font-size: 1rem; }
+        .badge {
+            display: inline-block;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            margin: 0.5rem 0.25rem;
+        }
+        .badge.live { background: rgba(16,185,129,0.1); color: var(--success); border-color: var(--success); }
+        .badge.next { background: rgba(245,158,11,0.1); color: var(--warning); border-color: var(--warning); }
+        .badge.free { background: rgba(59,130,246,0.1); color: var(--info); border-color: var(--info); }
+        .section { margin-bottom: 3rem; }
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.75rem; font-size: 1.1rem; }
+        .card p, .card li { color: var(--text-secondary); font-size: 0.95rem; }
+        .card ul { padding-left: 1.5rem; margin-top: 0.5rem; }
+        .card li { margin-bottom: 0.35rem; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+        @media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        .table-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            padding: 0.85rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+        th {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        tr:last-child td { border-bottom: none; }
+        td code {
+            background: var(--bg-tertiary);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .status-done { color: var(--success); font-weight: 600; }
+        .status-next { color: var(--accent); font-weight: 600; }
+        .status-planned { color: var(--text-secondary); font-weight: 600; }
+        .tier-free { color: var(--success); }
+        .tier-pro { color: var(--info); }
+        .tier-team { color: var(--warning); }
+        .timeline { padding-left: 2rem; border-left: 2px solid var(--border); }
+        .timeline-item { margin-bottom: 1.5rem; position: relative; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.4rem;
+            top: 0.4rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+        .timeline-item.done::before { background: var(--success); }
+        .timeline-item h4 { font-size: 1rem; margin-bottom: 0.25rem; }
+        .timeline-item p { color: var(--text-secondary); font-size: 0.9rem; }
+        .timeline-item .time { color: var(--text-secondary); font-size: 0.8rem; font-style: italic; }
+        pre {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-top: 0.75rem;
+        }
+        code { font-family: "JetBrains Mono", "Fira Code", monospace; }
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        .alert.info { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); color: var(--info); }
+        .alert.success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: var(--success); }
+        .alert.warning { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); color: var(--warning); }
+        a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+        a:hover { color: var(--accent-hover); text-decoration: underline; }
+        footer {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <header>
+            <h1>🔧 AutoParts — Session Summary</h1>
+            <p>Complete project documentation, architecture, quotas, subscriptions, and roadmap</p>
+            <div>
+                <span class="badge live">Phase 1: Live</span>
+                <span class="badge next">Phase 2: Next</span>
+                <span class="badge">Private Repository</span>
+                <span class="badge">React + NHTSA (Direct)</span>
+            </div>
+        </header>
+
+        <!-- ===== SECTION 1: WHAT WE BUILT ===== -->
+        <div class="section">
+            <h2 class="section-title">What We Built So Far</h2>
+
+            <div class="card">
+                <h3>Phase 1 — VIN Decoder + Vehicle Lookup ✅ Complete</h3>
+                <ul>
+                    <li>React 19 + TypeScript + Vite frontend with React Router 7</li>
+                    <li><strong>VIN decoder calling NHTSA vPIC API directly from the browser</strong> — no backend needed</li>
+                    <li>Manual Make/Model/Year selector using NHTSA API directly</li>
+                    <li>Vehicle catalog pages: Home, VIN Decoder, Catalog, Brand</li>
+                    <li>Reusable components: Layout, VehicleCard, VINScanner</li>
+                    <li>Catalog data served from local JSON seed files (imported into frontend)</li>
+                    <li>Admin dashboard (<code>readme.html</code>) for tracking APIs and credentials</li>
+                    <li>Project roadmap with 7 phases documented in dashboard</li>
+                    <li>Frontend flattened to repository root for Freebuff hosting</li>
+                    <li>Preview running on Freebuff Cloud — fully functional VIN decoding</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>Key Decisions Made</h3>
+                <ul>
+                    <li><strong>Private/proprietary</strong> — not open-source.</li>
+                    <li><strong>Direct NHTSA calls from browser</strong> — NHTSA supports CORS (<code>access-control-allow-origin: *</code>), so no backend proxy needed for VIN decoding</li>
+                    <li><strong>Local catalog data</strong> — brands and popular models imported as JSON modules in the frontend</li>
+                    <li><strong>No dummy features</strong> — every visible feature is functional</li>
+                    <li><strong>Local-first strategy</strong> — Phase 3 uses pre-rendered PNG/SVG, Phase 4 uses client-side Three.js</li>
+                    <li><strong>Supabase for database</strong> — PostgreSQL, Auth, and Storage on free tier</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 2: SESSION TIMELINE ===== -->
+        <div class="section">
+            <h2 class="section-title">Session Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item done">
+                    <span class="time">Step 1</span>
+                    <h4>Initialized Git + Repository Setup</h4>
+                    <p>Created GitHub repo, .gitignore, README, extracted source via Codespaces</p>
+                </div>
+                <div class="timeline-item done">
+                    <span class="time">Step 2</span>
+                    <h4>Created Admin Dashboard + Project Roadmap</h4>
+                    <p>readme.html with full Phase 1–7 plan, API tracking, and credentials vault</p>
+                </div>
+                <div class="timeline-item done">
+                    <span class="time">Step 3</span>
+                    <h4>Configured Freebuff Preview</h4>
+                    <p>Set install/build/dev commands, started preview server on Freebuff Cloud</p>
+                </div>
+                <div class="timeline-item done">
+                    <span class="time">Step 4</span>
+                    <h4>Fixed VIN Decoder — Removed Backend Dependency</h4>
+                    <p>Discovered "API error: Network Error" — backend wasn't running in Freebuff. Rewrote to call NHTSA API directly from browser (CORS confirmed). Catalog data imported as local JSON modules.</p>
+                </div>
+                <div class="timeline-item done">
+                    <span class="time">Step 5</span>
+                    <h4>Audited & Removed Dummy Features</h4>
+                    <p>Removed fake part counts from homepage cards. Fixed "Open-source" text to "Proprietary". All visible features now functional.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">Next</span>
+                    <h4>Phase 2 — Parts Catalog Database</h4>
+                    <p>Set up Supabase, define schema, create migrations, connect frontend navigation</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 3: ARCHITECTURE ===== -->
+        <div class="section">
+            <h2 class="section-title">Current Architecture</h2>
+
+            <div class="card">
+                <h3>Request Flow (Updated — No Backend for VIN)</h3>
+                <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                    Browser (User)                            │
+│                                                             │
+│  React 19 + Vite App (Port 5173)                            │
+│  ├─ src/services/nhtsa.ts → Direct fetch to NHTSA API       │
+│  │   └─ https://vpic.nhtsa.dot.gov/api/vehicles/*           │
+│  │       (CORS: access-control-allow-origin: *)             │
+│  │                                                           │
+│  └─ src/data/brands.json, popular-models.json               │
+│      └─ Local JSON seed data (imported at build time)       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+
+Phase 2+ will add:
+┌─────────────────────────────────────────────────────────────┐
+│  FastAPI Backend (Phase 2)                                   │
+│  ├─ /api/catalog/* → Supabase PostgreSQL                    │
+│  └─ /api/vin/* → NHTSA proxy (optional, for rate limiting)  │
+│                                                             │
+│  Supabase (Phase 2+)                                        │
+│  ├─ PostgreSQL database (brands, vehicles, parts)           │
+│  ├─ Auth (Phase 6)                                          │
+│  └─ Storage (Phase 6 — images, 3D models)                   │
+└─────────────────────────────────────────────────────────────┘
+                </pre>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 4: FREE QUOTAS & CAPACITY ===== -->
+        <div class="section">
+            <h2 class="section-title">Free Quotas & Capacity Limits</h2>
+
+            <div class="alert info">
+                <strong>📊 Key Insight:</strong> Every service currently used in Phase 1 is completely free with no API key. The limits below show when you'll need to upgrade as you scale to hundreds of users.
+            </div>
+
+            <!-- NHTSA -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Free Tier Quota</th>
+                            <th>What It Means</th>
+                            <th>When You Hit It</th>
+                            <th>Upgrade Option</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>NHTSA vPIC API</strong></td>
+                            <td class="tier-free">Unlimited (no key)</td>
+                            <td>Public government API. No rate limit documented. No API key needed. CORS enabled for browser calls.</td>
+                            <td>Unlikely — designed for heavy public use</td>
+                            <td>N/A — always free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supabase Database</strong></td>
+                            <td class="tier-free">500 MB storage</td>
+                            <td>PostgreSQL database. Enough for ~50,000 parts with images metadata.</td>
+                            <td>~1,000–2,000 vehicles with full part catalogs</td>
+                            <td><strong>Pro: $25/mo</strong> → 8 GB</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supabase Auth</strong></td>
+                            <td class="tier-free">50,000 MAU</td>
+                            <td>Monthly Active Users for login/signup. Email + OAuth providers.</td>
+                            <td>50,000 unique logins/month</td>
+                            <td><strong>Pro: $25/mo</strong> → 100,000 MAU</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supabase Storage</strong></td>
+                            <td class="tier-free">1 GB</td>
+                            <td>File uploads (images, diagrams, 3D models). 1 GB ≈ 2,000 PNG diagrams.</td>
+                            <td>~500 exploded diagrams</td>
+                            <td><strong>Pro: $25/mo</strong> → 100 GB</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supabase Edge Functions</strong></td>
+                            <td class="tier-free">500K invocations/mo</td>
+                            <td>Serverless functions for custom API logic.</td>
+                            <td>~17,000 requests/day</td>
+                            <td><strong>Pro: $25/mo</strong> → 2M invocations</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supabase Realtime</strong></td>
+                            <td class="tier-free">200 concurrent</td>
+                            <td>WebSocket connections for live updates.</td>
+                            <td>200 simultaneous users</td>
+                            <td><strong>Pro: $25/mo</strong> → 500 concurrent</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supabase Bandwidth</strong></td>
+                            <td class="tier-free">5 GB/mo</td>
+                            <td>Data transfer out (API responses, file downloads).</td>
+                            <td>~50,000 page views/month</td>
+                            <td><strong>Pro: $25/mo</strong> → 250 GB</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Freebuff Preview</strong></td>
+                            <td class="tier-free">Active while workspace open</td>
+                            <td>Temporary *.daytonaproxy01.net URL. Dies when workspace closes.</td>
+                            <td>N/A — dev only</td>
+                            <td>Deploy for permanent URL</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Freebuff Hosting</strong></td>
+                            <td class="tier-free">Free (static sites)</td>
+                            <td>Permanent *.freebuff.app URL. Static frontend only.</td>
+                            <td>Depends on traffic tier</td>
+                            <td>Check Freebuff pricing for high-traffic</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Render (Backend)</strong></td>
+                            <td class="tier-free">750 hrs/mo, spins down</td>
+                            <td>Free tier spins down after 15 min inactivity. ~30s cold start.</td>
+                            <td>Users notice cold start delay</td>
+                            <td><strong>Starter: $7/mo</strong> → always-on</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GitHub Codespaces</strong></td>
+                            <td class="tier-free">120 core-hours/mo</td>
+                            <td>Cloud IDE for development. 2-core machine = 60 hours/month.</td>
+                            <td>Heavy development sessions</td>
+                            <td><strong>$0.18/hr</strong> per core beyond free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Three.js</strong></td>
+                            <td class="tier-free">Open source, unlimited</td>
+                            <td>Client-side 3D rendering library. Runs in user's browser GPU.</td>
+                            <td>Never — it's a library</td>
+                            <td>N/A — always free</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 5: SUBSCRIPTION PLANS ===== -->
+        <div class="section">
+            <h2 class="section-title">Subscription Plans & When to Upgrade</h2>
+
+            <div class="grid-2">
+                <!-- Supabase Plans -->
+                <div class="card">
+                    <h3>☁️ Supabase Plans</h3>
+                    <div class="table-container" style="margin-bottom:0">
+                        <table>
+                            <thead>
+                                <tr><th>Plan</th><th>Price</th><th>Key Limits</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="tier-free"><strong>Free</strong></td>
+                                    <td>$0/mo</td>
+                                    <td>500 MB DB, 1 GB Storage, 50K MAU, 5 GB bandwidth, no backups</td>
+                                </tr>
+                                <tr>
+                                    <td class="tier-pro"><strong>Pro</strong></td>
+                                    <td>$25/mo</td>
+                                    <td>8 GB DB, 100 GB Storage, 100K MAU, 250 GB bandwidth, daily backups, PITR</td>
+                                </tr>
+                                <tr>
+                                    <td class="tier-team"><strong>Team</strong></td>
+                                    <td>$599/mo</td>
+                                    <td>8 GB DB, 100 GB Storage, SOC2, 24/7 support, SLA, custom domains</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Enterprise</strong></td>
+                                    <td>Custom</td>
+                                    <td>Unlimited, dedicated infrastructure, HIPAA, SSO</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p style="margin-top:1rem; font-size:0.85rem">
+                        <strong>When to upgrade to Pro ($25/mo):</strong> When your catalog exceeds 500 MB or you have &gt;200 concurrent users. For hundreds of users with full part catalogs, Pro is recommended.
+                    </p>
+                </div>
+
+                <!-- Render Plans -->
+                <div class="card">
+                    <h3>🖥️ Render Plans (Backend Hosting)</h3>
+                    <div class="table-container" style="margin-bottom:0">
+                        <table>
+                            <thead>
+                                <tr><th>Plan</th><th>Price</th><th>Key Limits</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="tier-free"><strong>Free</strong></td>
+                                    <td>$0/mo</td>
+                                    <td>Spins down after 15 min, ~30s cold start, 750 hrs/mo</td>
+                                </tr>
+                                <tr>
+                                    <td class="tier-pro"><strong>Starter</strong></td>
+                                    <td>$7/mo</td>
+                                    <td>Always-on, no cold start, 512 MB RAM</td>
+                                </tr>
+                                <tr>
+                                    <td class="tier-team"><strong>Standard</strong></td>
+                                    <td>$25/mo</td>
+                                    <td>1 GB RAM, autoscaling, custom domains</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p style="margin-top:1rem; font-size:0.85rem">
+                        <strong>When to upgrade to Starter ($7/mo):</strong> When users complain about cold-start delays. For hundreds of daily users, always-on is essential.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Capacity Planning -->
+            <div class="card">
+                <h3>📈 Capacity Planning for Hundreds of Users</h3>
+                <div class="table-container" style="margin-bottom:0">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User Count</th>
+                                <th>Monthly Cost</th>
+                                <th>What You Need</th>
+                                <th>Bottleneck</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1–50 users</strong></td>
+                                <td class="tier-free">$0/mo (all free)</td>
+                                <td>Free Supabase + Free Render + Free Freebuff</td>
+                                <td>Render cold starts (30s)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>50–200 users</strong></td>
+                                <td class="tier-pro">~$7–32/mo</td>
+                                <td>Supabase Free (likely sufficient) + Render Starter ($7)</td>
+                                <td>Supabase 5 GB bandwidth (~50K page views)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>200–1,000 users</strong></td>
+                                <td class="tier-pro">~$32–57/mo</td>
+                                <td>Supabase Pro ($25) + Render Starter ($7) + maybe Supabase Storage upgrade</td>
+                                <td>Database size (8 GB should handle 5,000+ vehicles)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>1,000–10,000 users</strong></td>
+                                <td class="tier-team">~$57–50/mo+</td>
+                                <td>Supabase Pro + Render Standard ($25) + CDN for static assets</td>
+                                <td>Bandwidth (250 GB = ~2.5M page views)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 6: API KEYS ===== -->
+        <div class="section">
+            <h2 class="section-title">API Keys & Credentials</h2>
+
+            <div class="alert success">
+                <strong>🔑 Phase 1 Status:</strong> No API keys needed! NHTSA is public. Catalog data is local JSON. The app works with zero configuration.
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Required Keys</th>
+                            <th>Where to Get</th>
+                            <th>Needed For</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>NHTSA vPIC</strong></td>
+                            <td>None (public API)</td>
+                            <td>N/A</td>
+                            <td>VIN decoding, makes, models</td>
+                            <td class="status-done">✅ No key needed</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supabase</strong></td>
+                            <td><code>SUPABASE_URL</code><br><code>SUPABASE_ANON_KEY</code><br><code>SUPABASE_SERVICE_KEY</code></td>
+                            <td>supabase.com → Dashboard → Settings → API</td>
+                            <td>Database, Auth, Storage (Phase 2+)</td>
+                            <td class="status-next">🔜 Create in Phase 2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 7: DATABASE ===== -->
+        <div class="section">
+            <h2 class="section-title">Database Plan (Phase 2)</h2>
+
+            <div class="card">
+                <h3>Supabase PostgreSQL Schema</h3>
+                <pre>
+brands
+├── id (uuid, PK)
+├── name (text)
+├── logo_url (text)
+└── created_at (timestamp)
+
+vehicles
+├── id (uuid, PK)
+├── brand_id (uuid, FK → brands)
+├── model (text)
+├── year_start (int)
+├── year_end (int)
+└── image_url (text)
+
+part_groups
+├── id (uuid, PK)
+├── vehicle_id (uuid, FK → vehicles)
+├── name (text)          -- e.g. "Engine", "Brakes", "Body"
+├── diagram_url (text)   -- PNG/SVG path (Phase 3)
+└── sort_order (int)
+
+parts
+├── id (uuid, PK)
+├── part_group_id (uuid, FK → part_groups)
+├── part_number (text)
+├── name (text)
+├── description (text)
+├── price (decimal)
+├── image_url (text)
+├── model_3d_url (text)  -- GLB/glTF path (Phase 4)
+└── compatibility_notes (text)
+
+vehicle_part_fitments
+├── id (uuid, PK)
+├── vehicle_id (uuid, FK → vehicles)
+├── part_id (uuid, FK → parts)
+├── oem_number (text)
+├── is_compatible (boolean)
+└── notes (text)
+
+user_events (analytics)
+├── id (uuid, PK)
+├── event_type (text)     -- 'page_view', 'vin_search', 'part_click'
+├── page (text)
+├── metadata (jsonb)
+├── session_id (text)
+├── user_id (uuid, nullable FK → auth.users)
+├── created_at (timestamp)
+                </pre>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 8: USER TRACKING ===== -->
+        <div class="section">
+            <h2 class="section-title">User Tracking & Analytics</h2>
+
+            <div class="alert warning">
+                <strong>⚠️ Privacy Note:</strong> This is a private/proprietary application. Any analytics must comply with your privacy policy.
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>📊 Page Views & Clicks (Free — Your Database)</h3>
+                    <ul>
+                        <li><strong>Custom tracking via Supabase</strong> — log events to a PostgreSQL table</li>
+                        <li><strong>No Google Analytics, no Mixpanel</strong> — all data stays in your Supabase</li>
+                        <li><strong>Tracked events:</strong>
+                            <ul>
+                                <li>Page load / route change</li>
+                                <li>VIN decode search</li>
+                                <li>Part number click</li>
+                                <li>Category/brand navigation</li>
+                                <li>3D model view</li>
+                            </ul>
+                        </li>
+                        <li><strong>Cost:</strong> $0 — uses your Supabase free tier (500 MB)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>👤 User Accounts (Phase 6)</h3>
+                    <ul>
+                        <li><strong>Supabase Auth</strong> — email/password, Google OAuth</li>
+                        <li><strong>Free tier:</strong> 50,000 MAU (Monthly Active Users)</li>
+                        <li><strong>Pro tier:</strong> 100,000 MAU ($25/mo)</li>
+                        <li><strong>Features:</strong> saved vehicles, search history, part favorites</li>
+                        <li><strong>When to add:</strong> Phase 6, or earlier if users request accounts</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 9: FULL PROJECT PLAN ===== -->
+        <div class="section">
+            <h2 class="section-title">Full Project Plan (Phases 1–7)</h2>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Name</th>
+                            <th>Key Deliverables</th>
+                            <th>Tools / Services</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1</strong></td>
+                            <td>VIN Decoder + Vehicle Lookup</td>
+                            <td>Direct NHTSA VIN decode from browser, manual Make/Model/Year selector, catalog browsing, admin dashboard</td>
+                            <td>React, NHTSA API (direct), local JSON data</td>
+                            <td class="status-done">✅ Complete</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2</strong></td>
+                            <td>Parts Catalog Database & Navigation</td>
+                            <td>PostgreSQL schema, migrations, seed pipeline, catalog API, brand→model→part browsing</td>
+                            <td>Supabase PostgreSQL, Alembic, JSON import</td>
+                            <td class="status-next">🔜 Next</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3</strong></td>
+                            <td>Pre-rendered 2D Diagrams</td>
+                            <td>PNG/SVG exploded diagrams, SVG hotspot overlays for clickable part numbers</td>
+                            <td>Static images in Supabase Storage, SVG overlay</td>
+                            <td class="status-planned">⏳ Planned</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4</strong></td>
+                            <td>Client-side 3D Views</td>
+                            <td>GLB/glTF model loading, orbit controls, part highlighting in browser</td>
+                            <td>Three.js, React Three Fiber, FreeCAD/Blender</td>
+                            <td class="status-planned">⏳ Planned</td>
+                        </tr>
+                        <tr>
+                            <td><strong>5</strong></td>
+                            <td>Search, Compatibility & AI</td>
+                            <td>Full-text search, fitment rules, OEM cross-reference</td>
+                            <td>Supabase full-text search, custom engine</td>
+                            <td class="status-planned">⏳ Planned</td>
+                        </tr>
+                        <tr>
+                            <td><strong>6</strong></td>
+                            <td>User Accounts, Pricing & Marketplace</td>
+                            <td>Auth, saved vehicles, pricing, supplier data, cart/quote workflow, user tracking</td>
+                            <td>Supabase Auth, Storage, user_events table</td>
+                            <td class="status-planned">⏳ Planned</td>
+                        </tr>
+                        <tr>
+                            <td><strong>7</strong></td>
+                            <td>Scale, Security & Polish</td>
+                            <td>Caching, CDN, DB indexes, monitoring, backups, tests, CI/CD</td>
+                            <td>Freebuff Hosting, Render, GitHub Actions</td>
+                            <td class="status-planned">⏳ Planned</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 10: TOOLS & SERVICES ===== -->
+        <div class="section">
+            <h2 class="section-title">Tools & Services</h2>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Tool / Service</th>
+                            <th>Purpose</th>
+                            <th>Status</th>
+                            <th>Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Frontend</strong></td>
+                            <td>React 19 + TypeScript + Vite 8</td>
+                            <td>SPA user interface</td>
+                            <td class="status-done">✅ Live</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Routing</strong></td>
+                            <td>React Router 7</td>
+                            <td>Client-side navigation</td>
+                            <td class="status-done">✅ Active</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>HTTP Client</strong></td>
+                            <td>Native Fetch API</td>
+                            <td>Direct NHTSA calls from browser</td>
+                            <td class="status-done">✅ Active</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Icons</strong></td>
+                            <td>Lucide React</td>
+                            <td>UI icon library</td>
+                            <td class="status-done">✅ Active</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>VIN API</strong></td>
+                            <td>NHTSA vPIC (direct browser)</td>
+                            <td>VIN decoding & vehicle specs — called from browser, no proxy</td>
+                            <td class="status-done">✅ Active</td>
+                            <td>Free (Public, unlimited)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backend (Phase 2)</strong></td>
+                            <td>Python FastAPI + Uvicorn</td>
+                            <td>REST API for catalog DB queries</td>
+                            <td class="status-next">🔜 Phase 2</td>
+                            <td>Free (Render free tier)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Database (Phase 2)</strong></td>
+                            <td>Supabase PostgreSQL</td>
+                            <td>Parts catalog, vehicle data, analytics</td>
+                            <td class="status-next">🔜 Phase 2</td>
+                            <td>Free (500 MB)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Auth (Phase 6)</strong></td>
+                            <td>Supabase Auth</td>
+                            <td>User login/signup</td>
+                            <td class="status-planned">⏳ Phase 6</td>
+                            <td>Free (50K MAU)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3D Viewer (Phase 4)</strong></td>
+                            <td>Three.js + React Three Fiber</td>
+                            <td>Client-side 3D model rendering</td>
+                            <td class="status-planned">⏳ Phase 4</td>
+                            <td>Free (open source)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CAD (Phase 4)</strong></td>
+                            <td>FreeCAD + Blender</td>
+                            <td>Create GLB/glTF 3D models</td>
+                            <td class="status-planned">⏳ Phase 4</td>
+                            <td>Free (open source)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Preview</strong></td>
+                            <td>Freebuff Cloud</td>
+                            <td>Development preview server</td>
+                            <td class="status-done">✅ Running</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Deployment</strong></td>
+                            <td>Freebuff Hosting</td>
+                            <td>Permanent production URL (frontend)</td>
+                            <td class="status-next">🔜 Ready</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Version Control</strong></td>
+                            <td>GitHub (Private)</td>
+                            <td>Source code repository</td>
+                            <td class="status-done">✅ Active</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Local Dev</strong></td>
+                            <td>GitHub Desktop + VS Code</td>
+                            <td>Local editing and Git sync</td>
+                            <td class="status-done">✅ Active</td>
+                            <td>Free</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 11: LOCAL DEV SETUP ===== -->
+        <div class="section">
+            <h2 class="section-title">Local Development Setup</h2>
+
+            <div class="alert info">
+                <strong>💡 GitHub Desktop:</strong> You have both AutoParts and CarPartsFinder cloned. Use "Open in Visual Studio Code" from GitHub Desktop to edit locally. Changes sync via push/pull without opening a browser.
+            </div>
+
+            <div class="card">
+                <h3>Start the Frontend Locally</h3>
+                <pre>
+# Frontend only (VIN decoder works without backend!)
+cd AutoParts
+npm install
+npm run dev
+
+# Open http://localhost:5173
+# VIN Decoder works immediately — calls NHTSA directly from browser
+                </pre>
+            </div>
+
+            <div class="card">
+                <h3>Start the Backend (Optional — for Phase 2+)</h3>
+                <pre>
+# Terminal 1 — Backend (only needed for Phase 2+ catalog API)
+cd backend
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --port 8000
+
+# Or use START.ps1 on Windows
+.\START.ps1
+                </pre>
+            </div>
+
+            <div class="card">
+                <h3>GitHub Desktop Workflow (No Browser Needed)</h3>
+                <ul>
+                    <li>Open <strong>GitHub Desktop</strong> → select <strong>AutoParts</strong></li>
+                    <li>Click <strong>Open in Visual Studio Code</strong> to edit files locally</li>
+                    <li>After editing, return to GitHub Desktop → review changes → <strong>Commit to main</strong> → <strong>Push origin</strong></li>
+                    <li>Freebuff auto-syncs when you push to GitHub</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>Repository Structure</h3>
+                <pre>
+AutoParts/
+├── backend/                 # Python FastAPI (Phase 2+ only)
+│   ├── app/
+│   │   ├── routers/         # API route handlers
+│   │   ├── data/            # JSON seed data
+│   │   └── main.py          # FastAPI app + CORS
+│   └── requirements.txt
+├── src/                     # React frontend (at root)
+│   ├── components/          # Layout, VehicleCard, VINScanner
+│   ├── data/                # Local JSON seed data (brands, popular models)
+│   ├── pages/               # Home, VIN, Catalog, Brand
+│   ├── services/
+│   │   ├── api.ts           # API client (VIN + catalog)
+│   │   └── nhtsa.ts         # Direct NHTSA browser calls
+│   ├── types/index.ts       # TypeScript interfaces
+│   └── styles/global.css
+├── public/                  # Static assets
+├── .gitignore
+├── package.json
+├── vite.config.ts
+├── readme.html              # Admin dashboard
+├── session.html             # This file
+├── README.md
+└── LICENSE
+                </pre>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 12: NEXT STEPS ===== -->
+        <div class="section">
+            <h2 class="section-title">Next Steps</h2>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>🎯 Immediate</h3>
+                    <ul>
+                        <li>Verify VIN decoder works on the live preview URL</li>
+                        <li>Test Make/Model/Year selector</li>
+                        <li>Test catalog browsing and brand pages</li>
+                        <li>Commit and push all changes</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>📅 Phase 2</h3>
+                    <ul>
+                        <li>Create a Supabase project (free tier)</li>
+                        <li>Define the catalog schema in Supabase</li>
+                        <li>Build the seed/import script (JSON → PostgreSQL)</li>
+                        <li>Add FastAPI endpoints for catalog DB queries</li>
+                        <li>Connect frontend navigation: Brand → Model → Part</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>AutoParts Session Summary — Updated August 21, 2026</p>
+            <p>Private Repository: github.com/len-golani/AutoParts</p>
+        </footer>
+
+    </div>
+</body>
+</html>

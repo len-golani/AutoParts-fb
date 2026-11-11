@@ -1,0 +1,267 @@
+/* VINScanner.module.css */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Legend ─────────────────────────────────────────────────────────────── */
+.legend {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.legendBracket {
+  color: var(--text-muted);
+}
+
+.legendLabel {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.wmi { color: var(--amber); }
+.vds { color: var(--ice); }
+.vis { color: var(--success); }
+
+/* ── VIN Character Display ─────────────────────────────────────────────── */
+.vinDisplay {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+
+@media (max-width: 600px) {
+  .vinDisplay {
+    gap: 2px;
+  }
+}
+
+.vinChar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 48px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  transition: all 0.12s ease;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .vinChar {
+    width: 28px;
+    height: 40px;
+  }
+}
+
+.wmiChar { border-bottom-color: var(--amber-dim); }
+.vdsChar { border-bottom-color: rgba(79, 195, 247, 0.4); }
+.visChar { border-bottom-color: rgba(74, 222, 128, 0.4); }
+
+.filled {
+  background: var(--bg-elevated);
+}
+
+.scanned {
+  background: var(--bg-elevated);
+}
+
+.scanning {
+  border-color: var(--amber) !important;
+  background: var(--amber-glow) !important;
+  box-shadow: 0 0 10px var(--amber-glow-strong);
+  animation: scanPulse 0.12s ease;
+}
+
+@keyframes scanPulse {
+  0% { transform: scaleY(1.08); }
+  100% { transform: scaleY(1); }
+}
+
+.charValue {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+@media (max-width: 600px) {
+  .charValue {
+    font-size: 0.72rem;
+  }
+}
+
+.filled .charValue {
+  color: var(--amber);
+}
+
+.scanned .charValue {
+  color: var(--success);
+}
+
+.charIndex {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  line-height: 1;
+  margin-top: 3px;
+}
+
+/* ── Form ──────────────────────────────────────────────────────────────── */
+.form {
+  display: flex;
+  gap: var(--space-3);
+  align-items: stretch;
+}
+
+@media (max-width: 600px) {
+  .form {
+    flex-direction: column;
+  }
+}
+
+.inputWrapper {
+  flex: 1;
+  position: relative;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.vinInput {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--amber);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 14px 52px 14px 44px;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  text-transform: uppercase;
+}
+
+.vinInput:focus {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px var(--amber-glow);
+}
+
+.vinInput::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  font-size: 0.85rem;
+}
+
+.vinInputError {
+  border-color: var(--error);
+}
+
+.vinInputError:focus {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+}
+
+.vinInputValid {
+  border-color: rgba(74, 222, 128, 0.5);
+}
+
+.charCount {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.countDone {
+  color: var(--success);
+}
+
+.decodeBtn {
+  padding: 14px 28px;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.spin {
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Error ─────────────────────────────────────────────────────────────── */
+.error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  border-radius: var(--radius-md);
+  color: var(--error);
+  font-size: 0.875rem;
+  animation: slideUp 0.25s ease;
+}
+
+/* ── Hint ──────────────────────────────────────────────────────────────── */
+.hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.hintText {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.hintBtn {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ice);
+  background: var(--ice-dim);
+  border: 1px solid rgba(79, 195, 247, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.18s;
+  letter-spacing: 0.04em;
+}
+
+.hintBtn:hover {
+  background: rgba(79, 195, 247, 0.2);
+  border-color: rgba(79, 195, 247, 0.4);
+}

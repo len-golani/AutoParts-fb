@@ -1,0 +1,225 @@
+/* VehicleCard.module.css */
+
+.card {
+  border-color: rgba(74, 222, 128, 0.2);
+  box-shadow: 0 0 32px rgba(74, 222, 128, 0.06);
+}
+
+/* ── Header ────────────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.checkBadge {
+  color: var(--success);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.vehicleName {
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.trim {
+  color: var(--amber);
+  font-weight: 600;
+}
+
+.vinBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.vinLabel {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.vinValue {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--amber);
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+/* ── Stat Strip ────────────────────────────────────────────────────────── */
+.statStrip {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-right: 1px solid var(--border);
+  flex: 1;
+  min-width: 120px;
+}
+
+.stat:last-child {
+  border-right: none;
+}
+
+.statIcon {
+  color: var(--amber);
+  flex-shrink: 0;
+}
+
+.statLabel {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
+  margin-bottom: 2px;
+}
+
+.statValue {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+
+/* ── Spec Table ────────────────────────────────────────────────────────── */
+.specSection {
+  padding: var(--space-5) var(--space-6);
+}
+
+.specTitle {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-4);
+}
+
+.specGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .specGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.specRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  gap: var(--space-3);
+  transition: background 0.15s;
+}
+
+.specRow:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.specRow:hover {
+  background: var(--bg-elevated);
+}
+
+.specRow:last-child,
+.specRow:nth-last-child(2):nth-child(odd) {
+  border-bottom: none;
+}
+
+.specKey {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  flex: 1;
+  min-width: 0;
+}
+
+.specVal {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.toggleSpecs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  background: none;
+  border: none;
+  color: var(--ice);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 4px 0;
+  font-family: var(--font-body);
+  transition: color 0.18s;
+}
+
+.toggleSpecs:hover {
+  color: #81d4fa;
+}
+
+/* ── Warning ────────────────────────────────────────────────────────────── */
+.warning {
+  margin: 0 var(--space-6) var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(251, 146, 60, 0.08);
+  border: 1px solid rgba(251, 146, 60, 0.25);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  color: var(--warning);
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.01);
+  flex-wrap: wrap;
+}
+
+.footerText {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}

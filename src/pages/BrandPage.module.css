@@ -1,0 +1,270 @@
+/* BrandPage.module.css */
+
+.page {
+  padding: var(--space-12) 0;
+}
+
+/* ── Breadcrumb ───────────────────────────────────────────────────────── */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+}
+
+.breadcrumbLink {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.breadcrumbLink:hover {
+  color: var(--amber);
+}
+
+.breadcrumbSep {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.breadcrumbCurrent {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ── Brand Header ─────────────────────────────────────────────────────── */
+.brandHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.brandInitial {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-lg);
+  background: var(--amber-glow);
+  border: 1px solid var(--border-amber);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--amber);
+  flex-shrink: 0;
+}
+
+.brandName {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  margin: 4px 0;
+}
+
+.brandMeta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ── Phase Notice ─────────────────────────────────────────────────────── */
+.phaseNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--ice-dim);
+  border: 1px solid rgba(79, 195, 247, 0.2);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-8);
+  font-size: 0.85rem;
+  color: var(--ice);
+  line-height: 1.55;
+}
+
+.phaseNotice a {
+  color: var(--amber);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Section Title ────────────────────────────────────────────────────── */
+.sectionTitle {
+  margin-bottom: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+/* ── Model Grid ───────────────────────────────────────────────────────── */
+.modelGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+}
+
+@media (max-width: 1024px) {
+  .modelGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .modelGrid { grid-template-columns: 1fr; }
+}
+
+.modelCard {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.modelTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.modelName {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.comingSoon {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 6px;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.yearRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.yearPills {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.yearPill {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 2px 7px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-secondary);
+}
+
+.yearMore {
+  background: var(--ice-dim);
+  border-color: rgba(79, 195, 247, 0.25);
+  color: var(--ice);
+}
+
+.modelFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.modelFooterText {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.arrow {
+  color: var(--text-muted);
+  transition: transform 0.15s, color 0.15s;
+}
+
+.modelCard:hover .arrow {
+  transform: translateX(3px);
+  color: var(--amber);
+}
+
+/* ── VIN CTA ──────────────────────────────────────────────────────────── */
+.vinCTA {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--space-8);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-amber);
+  border-radius: var(--radius-lg);
+  flex-wrap: wrap;
+}
+
+.vinCTATitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+}
+
+.vinCTAText {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* ── Loading / Error ──────────────────────────────────────────────────── */
+.loadingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+.skeleton {
+  height: 160px;
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 0%,
+    var(--bg-elevated) 50%,
+    var(--bg-surface) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.errorBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-16) 0;
+  color: var(--text-muted);
+}

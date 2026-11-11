@@ -1,0 +1,296 @@
+/* CatalogPage.module.css */
+
+.page {
+  padding: var(--space-12) 0;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────── */
+.pageHeader {
+  margin-bottom: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── Toolbar ──────────────────────────────────────────────────────────── */
+.toolbar {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.searchWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 400px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 10px 14px 10px 36px;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.searchInput:focus {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px var(--amber-glow);
+}
+
+.searchInput::placeholder {
+  color: var(--text-muted);
+}
+
+.regionTabs {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.regionTab {
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+}
+
+.regionTab:hover {
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+}
+
+.regionActive {
+  background: var(--amber-glow) !important;
+  border-color: var(--border-amber) !important;
+  color: var(--amber) !important;
+}
+
+/* ── Result count ─────────────────────────────────────────────────────── */
+.resultCount {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+}
+
+/* ── Groups ───────────────────────────────────────────────────────────── */
+.group {
+  margin-bottom: var(--space-10);
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.groupLabel {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.groupCount {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 2px 8px;
+}
+
+/* ── Brand Grid ───────────────────────────────────────────────────────── */
+.brandGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+
+@media (max-width: 1024px) {
+  .brandGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .brandGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .brandGrid { grid-template-columns: 1fr; }
+}
+
+.brandCard {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.brandTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.brandInitial {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--amber-glow);
+  border: 1px solid var(--border-amber);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--amber);
+  flex-shrink: 0;
+}
+
+.brandName {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.brandOrigin {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Model pills */
+.brandModels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 1;
+}
+
+.modelPill {
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 100px;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.modelMore {
+  background: var(--ice-dim);
+  color: var(--ice);
+  border-color: rgba(79, 195, 247, 0.25);
+}
+
+/* Footer row */
+.brandFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.modelCount {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.arrow {
+  color: var(--text-muted);
+  transition: transform 0.18s, color 0.18s;
+}
+
+.brandCard:hover .arrow {
+  transform: translateX(3px);
+  color: var(--amber);
+}
+
+/* ── Skeleton / Empty ─────────────────────────────────────────────────── */
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+
+@media (max-width: 1024px) { .skeletonGrid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px) { .skeletonGrid { grid-template-columns: repeat(2, 1fr); } }
+
+.skeleton {
+  height: 160px;
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 0%,
+    var(--bg-elevated) 50%,
+    var(--bg-surface) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-20) 0;
+  color: var(--text-muted);
+}
+
+.empty p {
+  font-size: 0.95rem;
+}

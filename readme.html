@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoParts - Admin Dashboard</title>
+    <style>
+        :root {
+            --bg-primary: #0b0d12;
+            --bg-secondary: #151820;
+            --bg-tertiary: #1e222d;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #f59e0b; /* Amber/Yellow matching AutoParts UI */
+            --accent-hover: #d97706;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #2a2f3d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .badge {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-label { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        .stat-sub { font-size: 0.875rem; color: var(--success); margin-top: 0.5rem; }
+
+        /* Roadmap */
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .roadmap-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            position: relative;
+        }
+        .roadmap-card.active { border-color: var(--success); }
+        .roadmap-card.next { border-color: var(--accent); }
+        .roadmap-number {
+            color: var(--accent);
+            font-family: monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .roadmap-card h3 { margin: 0.35rem 0 0.5rem; font-size: 1.05rem; }
+        .roadmap-card p { color: var(--text-secondary); font-size: 0.9rem; }
+        .roadmap-status {
+            display: inline-block;
+            margin-top: 0.9rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        .roadmap-card.active .roadmap-status { color: var(--success); }
+        .roadmap-card.next .roadmap-status { color: var(--accent); }
+
+        /* Sections */
+        .section { margin-bottom: 3rem; }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* Tables */
+        .table-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        tr:last-child td { border-bottom: none; }
+        td { font-size: 0.95rem; }
+        
+        .status-active { color: var(--success); font-weight: 600; }
+        .status-planned { color: var(--warning); font-weight: 600; }
+        .status-none { color: var(--text-secondary); }
+
+        a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+        a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+        /* Credentials Vault */
+        .vault-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .vault-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .vault-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .vault-title { font-weight: 600; font-size: 1.1rem; }
+        .vault-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-missing { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .status-configured { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        
+        .vault-field {
+            margin-bottom: 1rem;
+        }
+        .field-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+        .field-value {
+            background: var(--bg-tertiary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            word-break: break-all;
+        }
+        .field-value.placeholder { color: var(--text-secondary); font-style: italic; }
+
+        .alert-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--warning);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        /* Quick Links */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .link-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .link-card:hover {
+            border-color: var(--accent);
+            background: var(--bg-tertiary);
+            text-decoration: none;
+        }
+        .link-card span { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+        .link-card small { color: var(--text-secondary); font-size: 0.8rem; }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                🔧 AutoParts <span class="badge">ADMIN DASHBOARD</span>
+            </div>
+            <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                Phase 1 complete · Phase 2 next
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Local Backend</div>
+                <div class="stat-value">Port 8000</div>
+                <div class="stat-sub">● FastAPI / Uvicorn</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Local Frontend</div>
+                <div class="stat-value">Port 5173</div>
+                <div class="stat-sub">● React / Vite</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active APIs</div>
+                <div class="stat-value">1 / 4</div>
+                <div class="stat-sub">NHTSA vPIC (Public)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Project Status</div>
+                <div class="stat-value">Phase 1</div>
+                <div class="stat-sub">VIN Decoder Complete</div>
+            </div>
+        </div>
+
+        <!-- Alert -->
+        <div class="alert-box">
+            <strong>ℹ️ Account Information:</strong> As an AI, I did not create any external accounts for you. 
+            Phase 1 uses the public NHTSA API (no auth required). For Phase 2 (Database) and Deployment, 
+            you must create accounts on Supabase, Vercel, and Render. See the "Credentials Vault" below.
+        </div>
+
+        <!-- API Usage -->
+        <div class="section">
+            <h2 class="section-title">API Usage & Tracking</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>API Name</th>
+                            <th>Purpose</th>
+                            <th>Endpoint / Base URL</th>
+                            <th>Auth Required</th>
+                            <th>Direct Link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>NHTSA vPIC</strong></td>
+                            <td>VIN Decoding & Vehicle Specs</td>
+                            <td><code>https://vpic.nhtsa.dot.gov/api/</code></td>
+                            <td class="status-none">None (Public)</td>
+                            <td><a href="https://vpic.nhtsa.dot.gov/api/" target="_blank">NHTSA API Docs ↗</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supabase REST</strong></td>
+                            <td>Database, Auth, Storage (Phase 2)</td>
+                            <td><code>https://&lt;project&gt;.supabase.co/rest/v1/</code></td>
+                            <td class="status-planned">API Key (Anon/Service)</td>
+                            <td><a href="https://supabase.com/docs/guides/api" target="_blank">Supabase Docs ↗</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supabase Auth</strong></td>
+                            <td>User Login/Signup (Phase 6)</td>
+                            <td><code>https://&lt;project&gt;.supabase.co/auth/v1/</code></td>
+                            <td class="status-planned">JWT Token</td>
+                            <td><a href="https://supabase.com/docs/guides/auth" target="_blank">Supabase Auth ↗</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>FastAPI Local</strong></td>
+                            <td>Internal Backend API</td>
+                            <td><code>http://localhost:8000/api/</code></td>
+                            <td class="status-none">None (Local)</td>
+                            <td><a href="http://localhost:8000/docs" target="_blank">Swagger UI ↗</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Project Roadmap -->
+        <div class="section">
+            <h2 class="section-title">Project Roadmap</h2>
+            <div class="roadmap-grid">
+                <article class="roadmap-card active">
+                    <div class="roadmap-number">Phase 1 · Complete</div>
+                    <h3>VIN Decoder & Vehicle Foundation</h3>
+                    <p>React/Vite frontend, FastAPI backend, health and catalog routers, VIN lookup, JSON seed data, local CORS, and the admin dashboard.</p>
+                    <span class="roadmap-status">DELIVERED</span>
+                </article>
+                <article class="roadmap-card next">
+                    <div class="roadmap-number">Phase 2 · Next</div>
+                    <h3>Parts Catalog Database & Navigation</h3>
+                    <p>Define the relational catalog schema, migrate brand/model/vehicle/part data, build an idempotent seed pipeline, and connect brand-to-part browsing.</p>
+                    <span class="roadmap-status">NEXT MILESTONE</span>
+                </article>
+                <article class="roadmap-card">
+                    <div class="roadmap-number">Phase 3 · Planned</div>
+                    <h3>Pre-rendered 2D Diagrams</h3>
+                    <p>Store static PNG/SVG diagrams with invisible SVG hotspot overlays for clickable part numbers. No per-request image-generation or rendering API calls.</p>
+                    <span class="roadmap-status">LOCAL-FIRST</span>
+                </article>
+                <article class="roadmap-card">
+                    <div class="roadmap-number">Phase 4 · Planned</div>
+                    <h3>Client-side 3D Views</h3>
+                    <p>Load local or cached GLB/glTF assets in the browser with Three.js and React Three Fiber, using the user’s GPU instead of an external rendering service.</p>
+                    <span class="roadmap-status">CLIENT-SIDE</span>
+                </article>
+                <article class="roadmap-card">
+                    <div class="roadmap-number">Phase 5 · Planned</div>
+                    <h3>Search & Compatibility</h3>
+                    <p>Add indexed part search, vehicle fitment rules, OEM/reference-number matching, filters, and carefully bounded optional assistant features.</p>
+                    <span class="roadmap-status">PLANNED</span>
+                </article>
+                <article class="roadmap-card">
+                    <div class="roadmap-number">Phase 6 · Planned</div>
+                    <h3>Accounts & Marketplace</h3>
+                    <p>Add private user accounts, saved vehicles, favorites, pricing, supplier inventory, cart or quote workflows, and protected customer data.</p>
+                    <span class="roadmap-status">PLANNED</span>
+                </article>
+                <article class="roadmap-card">
+                    <div class="roadmap-number">Phase 7 · Planned</div>
+                    <h3>Scale, Security & Polish</h3>
+                    <p>Improve caching, CDN delivery, database indexes, observability, backups, security controls, automated tests, deployment workflows, and UI refinement.</p>
+                    <span class="roadmap-status">PLANNED</span>
+                </article>
+            </div>
+        </div>
+
+        <!-- Credentials Vault -->
+        <div class="section">
+            <h2 class="section-title">Credentials Vault</h2>
+            <div class="vault-grid">
+                <!-- NHTSA -->
+                <div class="vault-card">
+                    <div class="vault-header">
+                        <div class="vault-title">NHTSA vPIC</div>
+                        <div class="vault-status status-configured">CONFIGURED</div>
+                    </div>
+                    <div class="vault-field">
+                        <div class="field-label">Username / API Key</div>
+                        <div class="field-value">Not Required (Public API)</div>
+                    </div>
+                    <div class="vault-field">
+                        <div class="field-label">Password / Secret</div>
+                        <div class="field-value">Not Required</div>
+                    </div>
+                    <div class="vault-field">
+                        <div class="field-label">Config File</div>
+                        <div class="field-value">backend/app/routers/vin.py</div>
+                    </div>
+                </div>
+
+                <!-- Supabase -->
+                <div class="vault-card">
+                    <div class="vault-header">
+                        <div class="vault-title">Supabase (Phase 2)</div>
+                        <div class="vault-status status-missing">MISSING</div>
+                    </div>
+                    <div class="vault-field">
+                        <div class="field-label">Account Email</div>
+                        <div class="field-value placeholder">Create at supabase.com</div>
+                    </div>
+                    <div class="vault-field">
+                        <div class="field-label">Project URL</div>
+                        <div class="field-value placeholder">https://xxxxx.supabase.co</div>
+                    </div>
+                    <div class="vault-field">
+                        <div class="field-label">Anon Public Key</div>
+                        <div class="field-value placeholder">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</div>
+                    </div>
+                    <div class="vault-field">
+                        <div class="field-label">Service Role Key (Secret)</div>
+                        <div class="field-value placeholder">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... (Backend only)</div>
+                    </div>
+                </div>
+
+                <!-- Vercel -->
+                <div class="vault-card">
+                    <div class="vault-header">
+                        <div class="vault-title">Vercel (Frontend)</div>
+                        <div class="vault-status status-missing">MISSING</div>
+                    </div>
+                    <div class="vault-field">
+                        <div class="field-label">Login Method</div>
+                        <div class="field-value placeholder">GitHub OAuth</div>
+                    </div>
+                    <div class="vault-field">
+                        <div class="field-label">Dashboard</div>
+                        <div class="field-value"><a href="https://vercel.com/dashboard" target="_blank">vercel.com/dashboard ↗</a></div>
+                    </div>
+                </div>
+
+                <!-- Render -->
+                <div class="vault-card">
+                    <div class="vault-header">
+                        <div class="vault-title">Render (Backend)</div>
+                        <div class="vault-status status-missing">MISSING</div>
+                    </div>
+                    <div class="vault-field">
+                        <div class="field-label">Login Method</div>
+                        <div class="field-value placeholder">GitHub OAuth</div>
+                    </div>
+                    <div class="vault-field">
+                        <div class="field-label">Dashboard</div>
+                        <div class="field-value"><a href="https://dashboard.render.com/" target="_blank">dashboard.render.com ↗</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="section">
+            <h2 class="section-title">Quick Links</h2>
+            <div class="links-grid">
+                <a href="http://localhost:5173" target="_blank" class="link-card">
+                    <span>Frontend App</span>
+                    <small>localhost:5173</small>
+                </a>
+                <a href="http://localhost:8000/docs" target="_blank" class="link-card">
+                    <span>API Swagger Docs</span>
+                    <small>localhost:8000/docs</small>
+                </a>
+                <a href="http://localhost:8000/api/health" target="_blank" class="link-card">
+                    <span>Health Check</span>
+                    <small>localhost:8000/api/health</small>
+                </a>
+                <a href="https://github.com/len-golani/AutoParts" target="_blank" class="link-card">
+                    <span>GitHub Repo</span>
+                    <small>Source Code</small>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

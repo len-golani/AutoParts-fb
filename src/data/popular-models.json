@@ -1,0 +1,79 @@
+{
+  "popular_models": [
+    {
+      "id": "toyota-camry-2023",
+      "brand": "Toyota",
+      "brand_slug": "toyota",
+      "model": "Camry",
+      "model_slug": "camry",
+      "year": 2023,
+      "image": "/images/models/toyota-camry.jpg",
+      "description": "Mid-size sedan with 2.5L inline-4 or 3.5L V6. One of the world's best-selling cars.",
+      "engine_options": ["2.5L 4-Cylinder", "3.5L V6", "2.5L Hybrid"],
+      "assemblies_count": 47,
+      "parts_count": 1240,
+      "sample_assemblies": ["Engine", "Suspension Front", "Brakes", "Transmission", "Cooling System"],
+      "tags": ["Sedan", "Hybrid Available", "Popular"]
+    },
+    {
+      "id": "vw-golf-2023",
+      "brand": "Volkswagen",
+      "brand_slug": "volkswagen",
+      "model": "Golf",
+      "model_slug": "golf",
+      "year": 2023,
+      "image": "/images/models/vw-golf.jpg",
+      "description": "Iconic European compact hatchback. Mk8 generation with advanced driver assistance systems.",
+      "engine_options": ["1.0L TSI", "1.5L eTSI", "2.0L TDI", "2.0L TSI GTI"],
+      "assemblies_count": 52,
+      "parts_count": 1380,
+      "sample_assemblies": ["Engine", "DSG Gearbox", "Suspension", "Brakes", "Electrics"],
+      "tags": ["Hatchback", "MK8", "GTI Available"]
+    },
+    {
+      "id": "ford-f150-2023",
+      "brand": "Ford",
+      "brand_slug": "ford",
+      "model": "F-150",
+      "model_slug": "f-150",
+      "year": 2023,
+      "image": "/images/models/ford-f150.jpg",
+      "description": "America's best-selling truck. 14th generation with high-strength aluminum alloy body.",
+      "engine_options": ["3.3L V6", "2.7L EcoBoost V6", "3.5L EcoBoost V6", "5.0L V8", "3.5L PowerBoost Hybrid"],
+      "assemblies_count": 61,
+      "parts_count": 1820,
+      "sample_assemblies": ["Engine", "4WD Transfer Case", "Bed & Tailgate", "Suspension", "Trailer Hitch"],
+      "tags": ["Pickup", "4WD", "Best-Seller"]
+    },
+    {
+      "id": "honda-civic-2023",
+      "brand": "Honda",
+      "brand_slug": "honda",
+      "model": "Civic",
+      "model_slug": "civic",
+      "year": 2023,
+      "image": "/images/models/honda-civic.jpg",
+      "description": "11th generation compact. Available as sedan, hatchback, Si, and Type R.",
+      "engine_options": ["1.5L Turbocharged", "2.0L Naturally Aspirated", "2.0L Turbocharged (Type R)"],
+      "assemblies_count": 44,
+      "parts_count": 1180,
+      "sample_assemblies": ["Engine", "CVT Transmission", "Honda Sensing", "Suspension", "HVAC"],
+      "tags": ["Compact", "Hatchback Available", "Type R"]
+    },
+    {
+      "id": "bmw-3series-2023",
+      "brand": "BMW",
+      "brand_slug": "bmw",
+      "model": "3 Series",
+      "model_slug": "3-series",
+      "year": 2023,
+      "image": "/images/models/bmw-3series.jpg",
+      "description": "G20 generation sport sedan. The benchmark for rear-wheel drive dynamics.",
+      "engine_options": ["2.0L 320i", "2.0L 330i", "3.0L 340i", "2.0L 320d TDI", "330e PHEV"],
+      "assemblies_count": 56,
+      "parts_count": 1560,
+      "sample_assemblies": ["Engine", "ZF 8-Speed", "xDrive AWD", "iDrive Electrics", "M Sport Suspension"],
+      "tags": ["Luxury", "RWD", "PHEV Available"]
+    }
+  ]
+}
