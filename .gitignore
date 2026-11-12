@@ -42,3 +42,7 @@ data/diagrams/
 
 # Supabase local
 .supabase/
+
+# Playwright
+test-results/
+playwright-report/
