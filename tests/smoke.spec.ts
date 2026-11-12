@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { stubGoogleFonts } from './google-fonts-stubs';
 import { stubNhtsa } from './nhtsa-stubs';
 
 // Set LIVE_NHTSA=1 to run the VIN tests against the real vPIC API.
@@ -10,6 +11,10 @@ const KNOWN_GOOD_VIN = '1HGCM82633A004352';
 const CHECK_DIGIT_VIN = '4T1BF3EK8AU561547';
 // NHTSA returns no vehicle data for this VIN.
 const BOGUS_VIN = '00000000000000000';
+
+test.beforeEach(async ({ page }) => {
+  await stubGoogleFonts(page);
+});
 
 test.describe('VIN decoder', () => {
   test.beforeEach(async ({ page }) => {
@@ -166,20 +171,51 @@ test.describe('catalog search and filtering', () => {
 test.describe('home popular models', () => {
   test('focused popular model card activates with Enter and Space', async ({ page }) => {
     const toyotaCard = page.getByRole('button', { name: /Toyota/i });
+    const expectToyotaBrandPage = async () => {
+      await expect(page).toHaveURL(/\/catalog\/toyota$/);
+      await expect(page.getByRole('heading', { name: 'Toyota', exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Toyota Lineup' })).toBeVisible();
+    };
 
     await page.goto('/');
     await expect(toyotaCard).toBeVisible();
     await toyotaCard.focus();
     await expect(toyotaCard).toBeFocused();
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(/\/catalog\/toyota$/);
+    await expectToyotaBrandPage();
 
     await page.goto('/');
     await expect(toyotaCard).toBeVisible();
     await toyotaCard.focus();
     await expect(toyotaCard).toBeFocused();
     await page.keyboard.press('Space');
+    await expectToyotaBrandPage();
+  });
+
+  test('clicking a popular model card opens its brand page', async ({ page }) => {
+    await page.goto('/');
+
+    const toyotaCard = page.getByRole('button', { name: /Toyota/i });
+    await expect(toyotaCard).toBeVisible();
+    await toyotaCard.click();
+
     await expect(page).toHaveURL(/\/catalog\/toyota$/);
+    await expect(page.getByRole('heading', { name: 'Toyota', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Toyota Lineup' })).toBeVisible();
+  });
+});
+
+test.describe('favicon', () => {
+  test('icon link points to a served SVG asset', async ({ page, request }) => {
+    await page.goto('/');
+
+    const href = await page.locator('link[rel="icon"]').getAttribute('href');
+    if (!href) throw new Error('No favicon link found in index.html');
+
+    const response = await request.get(new URL(href, page.url()).toString());
+    expect(response.status()).toBe(200);
+    expect(response.headers()['content-type']).toContain('image/svg+xml');
+    expect(await response.text()).toContain('<svg');
   });
 });
 
