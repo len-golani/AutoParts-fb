@@ -1,6 +1,34 @@
-import { test, expect } from '@playwright/test';
+import { test as base, expect } from '@playwright/test';
 import { stubGoogleFonts } from './google-fonts-stubs';
 import { stubNhtsa } from './nhtsa-stubs';
+
+// Fail any test that lets a page reach an external host without a route stub.
+const test = base.extend<{ offlineGuard: void }>({
+  offlineGuard: [
+    async ({ page }, use) => {
+      const unexpected: string[] = [];
+      await page.route(/^https?:\/\//, route => {
+        const url = new URL(route.request().url());
+        if (url.hostname === '127.0.0.1' || url.hostname === 'localhost' || url.hostname === '[::1]') {
+          return route.continue();
+        }
+        // Live mode intentionally reaches NHTSA; all other external hosts stay guarded.
+        if (process.env.LIVE_NHTSA === '1' && url.hostname === 'vpic.nhtsa.dot.gov') {
+          return route.continue();
+        }
+        unexpected.push(url.href);
+        return route.abort();
+      });
+      await stubGoogleFonts(page);
+      await use();
+      expect(
+        unexpected,
+        `Unexpected external requests without stubs: ${unexpected.join(', ')}`,
+      ).toEqual([]);
+    },
+    { auto: true },
+  ],
+});
 
 // Set LIVE_NHTSA=1 to run the VIN tests against the real vPIC API.
 const LIVE_NHTSA = process.env.LIVE_NHTSA === '1';
@@ -11,10 +39,6 @@ const KNOWN_GOOD_VIN = '1HGCM82633A004352';
 const CHECK_DIGIT_VIN = '4T1BF3EK8AU561547';
 // NHTSA returns no vehicle data for this VIN.
 const BOGUS_VIN = '00000000000000000';
-
-test.beforeEach(async ({ page }) => {
-  await stubGoogleFonts(page);
-});
 
 test.describe('VIN decoder', () => {
   test.beforeEach(async ({ page }) => {
