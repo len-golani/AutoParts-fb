@@ -7,9 +7,11 @@ import BrandPage from './pages/BrandPage';
 import NotFoundPage from './pages/NotFoundPage';
 import './styles/global.css';
 
+const routerBasename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
+
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={routerBasename}>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />

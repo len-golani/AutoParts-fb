@@ -139,7 +139,7 @@ export default function VINDecoderPage() {
   const handleManualSearch = () => {
     if (!catalogBrand || !selectedModel) return;
     // Phase 1: navigate to the matching brand page — full lookup in Phase 2
-    window.location.href = `/catalog/${catalogBrand.slug}`;
+    window.location.href = `${import.meta.env.BASE_URL}catalog/${catalogBrand.slug}`;
   };
 
   return (
