@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Car, Fuel, Settings, Gauge, MapPin, ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react';
-import type { VINDecodeResult } from '../../types';
+import { findCatalogBrand } from '../../services/catalog';
+import type { Brand, VINDecodeResult } from '../../types';
 import styles from './VehicleCard.module.css';
 
 interface VehicleCardProps {
   result: VINDecodeResult;
+  catalogBrands: Brand[] | null;
 }
 
 const PRIORITY_SPECS = [
@@ -14,8 +16,9 @@ const PRIORITY_SPECS = [
   'Plant Country', 'Plant City', 'Series',
 ];
 
-export default function VehicleCard({ result }: VehicleCardProps) {
+export default function VehicleCard({ result, catalogBrands }: VehicleCardProps) {
   const [showAllSpecs, setShowAllSpecs] = useState(false);
+  const catalogBrand = findCatalogBrand(catalogBrands, result.make);
 
   const specs = showAllSpecs
     ? result.all_specs.filter(s => s.value)
@@ -104,9 +107,15 @@ export default function VehicleCard({ result }: VehicleCardProps) {
         <p className={styles.footerText}>
           Found your vehicle — parts catalog coming in Phase 2
         </p>
-        <a href={`/catalog/${result.make?.toLowerCase()}`} className="btn btn-ghost">
-          Browse {result.make} Parts
-        </a>
+        {catalogBrand ? (
+          <a href={`/catalog/${catalogBrand.slug}`} className="btn btn-ghost">
+            Browse {result.make} Parts
+          </a>
+        ) : (
+          <button className="btn btn-ghost" disabled>
+            {result.make ? `Parts catalog for ${result.make} coming soon` : 'Parts catalog coming soon'}
+          </button>
+        )}
       </div>
     </div>
   );

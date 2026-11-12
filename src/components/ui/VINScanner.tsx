@@ -33,29 +33,37 @@ export default function VINScanner({ onDecode, loading, error, initialVin = '' }
     return () => clearInterval(t);
   }, []);
 
+  // Keep the latest decode callback without restarting the scan timer
+  const onDecodeRef = useRef(onDecode);
+  useEffect(() => {
+    onDecodeRef.current = onDecode;
+  }, [onDecode]);
+
   // Scan animation on submit
   useEffect(() => {
-    if (scanning && vin.length === 17) {
-      setScanIndex(0);
-      const interval = setInterval(() => {
-        setScanIndex(i => {
-          if (i >= 16) {
-            clearInterval(interval);
-            setScanning(false);
-            onDecode(vin.toUpperCase());
-            return -1;
-          }
-          return i + 1;
-        });
-      }, 55);
-      return () => clearInterval(interval);
-    }
-  }, [scanning]);
+    if (!scanning || vin.length !== 17) return;
+
+    let index = -1;
+    const interval = setInterval(() => {
+      index += 1;
+      if (index >= 17) {
+        clearInterval(interval);
+        setScanIndex(-1);
+        setScanning(false);
+        onDecodeRef.current(vin.toUpperCase());
+      } else {
+        setScanIndex(index);
+      }
+    }, 55);
+
+    return () => clearInterval(interval);
+  }, [scanning, vin]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const clean = vin.trim().toUpperCase();
     if (clean.length === 17) {
+      setScanIndex(0);
       setScanning(true);
     }
   };

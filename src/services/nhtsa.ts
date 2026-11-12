@@ -81,11 +81,29 @@ export async function decodeVin(vin: string): Promise<VINDecodeResult> {
 
   const errorCode = get(r, 'ErrorCode');
 
-  // ErrorCode "0" means success; anything else means partial/invalid
-  if (errorCode && errorCode !== '0') {
-    const errorText = get(r, 'ErrorText') || 'Could not fully decode this VIN.';
-    throw new Error(errorText);
+  // NHTSA reports problems as a comma-separated ErrorCode list. Only "0" is a
+  // clean decode; the rest are advisories (a bad check digit is the usual one),
+  // and the vehicle data is still returned. Fail only when there is no vehicle.
+  const make = get(r, 'Make');
+  const model = get(r, 'Model');
+  const year = get(r, 'ModelYear');
+  const errorText = get(r, 'ErrorText');
+
+  if (!make && !model && !year) {
+    throw new Error('NHTSA could not decode this VIN. Check the 17 characters and try again.');
   }
+
+  const advisoryCodes = (errorCode ?? '')
+    .split(',')
+    .map(code => code.trim())
+    .filter(code => code !== '' && code !== '0');
+
+  const advisory =
+    advisoryCodes.length === 0
+      ? null
+      : advisoryCodes.every(code => code === '1' || code === '2')
+        ? 'The VIN check digit did not validate. Double-check the VIN for typos — the vehicle data below still came from NHTSA.'
+        : `Decoded with warnings: ${errorText || 'some fields may be incomplete.'}`;
 
   // Fetch verbose decode for all_specs sidebar (optional enrichment)
   let all_specs: VehicleSpec[] = [];
@@ -105,9 +123,9 @@ export async function decodeVin(vin: string): Promise<VINDecodeResult> {
 
   return {
     vin: clean,
-    make: get(r, 'Make'),
-    model: get(r, 'Model'),
-    year: get(r, 'ModelYear'),
+    make,
+    model,
+    year,
     trim: get(r, 'Trim'),
     engine: get(r, 'EngineModel'),
     fuel_type: get(r, 'FuelTypePrimary'),
@@ -123,15 +141,15 @@ export async function decodeVin(vin: string): Promise<VINDecodeResult> {
     cylinders: get(r, 'EngineCylinders'),
     all_specs,
     error_code: errorCode,
-    error_text: null,
+    error_text: advisory,
   };
 }
 
 // ─── Makes ───────────────────────────────────────────────────────────────────
 
-interface NhtsaMake {
-  Make_ID: number;
-  Make_Name: string;
+interface NhtsaCarMake {
+  MakeId: number;
+  MakeName: string;
 }
 
 export interface NhtsaMakeResult {
@@ -139,17 +157,25 @@ export interface NhtsaMakeResult {
   make_name: string;
 }
 
-let _makesCache: NhtsaMakeResult[] | null = null;
+// Cached promise so concurrent callers (e.g. React StrictMode) share one request.
+let _carMakesPromise: Promise<NhtsaMakeResult[]> | null = null;
 
-export async function getAllMakes(): Promise<NhtsaMakeResult[]> {
-  if (_makesCache) return _makesCache;
-  const url = `${NHTSA_BASE}/GetAllMakes?format=json`;
-  const data = await fetchJson<{ Results: NhtsaMake[] }>(url);
-  _makesCache = (data.Results || []).map(item => ({
-    make_id: item.Make_ID,
-    make_name: item.Make_Name,
-  }));
-  return _makesCache;
+/** Car makes straight from NHTSA, so every make carries the ID NHTSA uses for model lookups. */
+export async function getCarMakes(): Promise<NhtsaMakeResult[]> {
+  if (!_carMakesPromise) {
+    const url = `${NHTSA_BASE}/GetMakesForVehicleType/car?format=json`;
+    _carMakesPromise = fetchJson<{ Results: NhtsaCarMake[] }>(url)
+      .then(data =>
+        (data.Results || [])
+          .map(item => ({ make_id: item.MakeId, make_name: item.MakeName }))
+          .sort((a, b) => a.make_name.localeCompare(b.make_name)),
+      )
+      .catch(err => {
+        _carMakesPromise = null;
+        throw err;
+      });
+  }
+  return _carMakesPromise;
 }
 
 // ─── Models ──────────────────────────────────────────────────────────────────
@@ -172,13 +198,21 @@ export async function getModelsForMake(
     url = `${NHTSA_BASE}/GetModelsForMakeId/${makeId}?format=json`;
   }
   const data = await fetchJson<{ Results: NhtsaModel[] }>(url);
+
+  // NHTSA lists the same model name under several model IDs (e.g. multiple
+  // Sprinter variants), so keep only the first entry for each name.
+  const modelsByName = new Map<string, { model_id: number; model_name: string }>();
+  for (const item of data.Results || []) {
+    const name = item.Model_Name?.trim();
+    if (name && !modelsByName.has(name.toLowerCase())) {
+      modelsByName.set(name.toLowerCase(), { model_id: item.Model_ID, model_name: name });
+    }
+  }
+
   return {
     make_id: makeId,
     year: year || null,
-    models: (data.Results || []).map(item => ({
-      model_id: item.Model_ID,
-      model_name: item.Model_Name,
-    })),
+    models: [...modelsByName.values()],
   };
 }
 

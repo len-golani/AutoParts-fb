@@ -1,21 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { List, ChevronDown } from 'lucide-react';
 import VINScanner from '../components/ui/VINScanner';
 import VehicleCard from '../components/ui/VehicleCard';
-import { vinApi } from '../services/api';
-import type { VINDecodeResult } from '../types';
+import { vinApi, catalogApi } from '../services/api';
+import { findCatalogBrand } from '../services/catalog';
+import type { NhtsaMakeResult } from '../services/nhtsa';
+import type { Brand, VINDecodeResult } from '../types';
 import styles from './VINDecoderPage.module.css';
-
-// Make/Model/Year manual selector (for users without a VIN)
-const POPULAR_MAKES = [
-  { id: 448, name: 'Toyota' }, { id: 474, name: 'Honda' },
-  { id: 460, name: 'Ford' }, { id: 473, name: 'Chevrolet' },
-  { id: 449, name: 'BMW' }, { id: 482, name: 'Mercedes-Benz' },
-  { id: 483, name: 'Nissan' }, { id: 457, name: 'Volkswagen' },
-  { id: 476, name: 'Hyundai' }, { id: 499, name: 'Kia' },
-  { id: 469, name: 'Subaru' }, { id: 467, name: 'Mazda' },
-];
 
 export default function VINDecoderPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -26,60 +18,128 @@ export default function VINDecoderPage() {
   const [tab, setTab] = useState<'vin' | 'manual'>('vin');
 
   // Manual selector state
+  const [makes, setMakes] = useState<NhtsaMakeResult[]>([]);
+  const [loadingMakes, setLoadingMakes] = useState(true);
+  const [makesError, setMakesError] = useState(false);
   const [selectedMake, setSelectedMake] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
   const [models, setModels] = useState<{ model_id: number; model_name: string }[]>([]);
   const [selectedModel, setSelectedModel] = useState('');
   const [loadingModels, setLoadingModels] = useState(false);
+  const [catalogBrands, setCatalogBrands] = useState<Brand[] | null>(null);
+  const modelRequest = useRef(0);
 
   const urlVin = searchParams.get('vin');
-
-  // Auto-decode if VIN in URL
-  useEffect(() => {
-    if (urlVin && urlVin.length === 17) {
-      handleDecode(urlVin);
-    }
-  }, [urlVin]);
+  const lastUrlVin = useRef<string | null>(null);
 
   // Load years
   useEffect(() => {
     vinApi.getYears().then(setYears).catch(() => {});
   }, []);
 
-  // Load models when make + year change
+  // Load car makes from NHTSA (each make carries NHTSA's own ID)
   useEffect(() => {
-    if (selectedMake) {
-      const makeId = POPULAR_MAKES.find(m => m.name === selectedMake)?.id;
-      if (!makeId) return;
-      setLoadingModels(true);
-      vinApi
-        .getModels(makeId, selectedYear ? parseInt(selectedYear) : undefined)
-        .then(d => setModels(d.models || []))
-        .catch(() => setModels([]))
-        .finally(() => setLoadingModels(false));
-    }
-  }, [selectedMake, selectedYear]);
+    let cancelled = false;
+    vinApi
+      .getMakes()
+      .then(list => {
+        if (!cancelled) setMakes(list);
+      })
+      .catch(() => {
+        if (!cancelled) setMakesError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingMakes(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  const handleDecode = async (vin: string) => {
+  // Load the local catalog so the manual CTA never links to an uncatalogued make
+  useEffect(() => {
+    let cancelled = false;
+    catalogApi
+      .getBrands()
+      .then(data => {
+        if (!cancelled) setCatalogBrands(data.brands);
+      })
+      .catch(() => {
+        if (!cancelled) setCatalogBrands([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const loadModels = (makeName: string, year: string) => {
+    const makeId = makes.find(m => m.make_name === makeName)?.make_id;
+    const request = ++modelRequest.current;
+
+    if (!makeId) {
+      setModels([]);
+      setLoadingModels(false);
+      return;
+    }
+
+    setLoadingModels(true);
+    vinApi
+      .getModels(makeId, year ? parseInt(year, 10) : undefined)
+      .then(data => {
+        if (request === modelRequest.current) setModels(data.models || []);
+      })
+      .catch(() => {
+        if (request === modelRequest.current) setModels([]);
+      })
+      .finally(() => {
+        if (request === modelRequest.current) setLoadingModels(false);
+      });
+  };
+
+  const handleMakeChange = (makeName: string) => {
+    setSelectedMake(makeName);
+    setSelectedModel('');
+    loadModels(makeName, selectedYear);
+  };
+
+  const handleYearChange = (year: string) => {
+    setSelectedYear(year);
+    setSelectedModel('');
+    if (selectedMake) loadModels(selectedMake, year);
+  };
+
+  const handleDecode = useCallback(async (vin: string) => {
     setLoading(true);
     setError(null);
     setResult(null);
     try {
       const data = await vinApi.decode(vin);
       setResult(data);
+      lastUrlVin.current = vin;
       setSearchParams({ vin });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to decode VIN');
     } finally {
       setLoading(false);
     }
-  };
+  }, [setSearchParams]);
+
+  // Auto-decode a VIN from the URL, but never re-decode one we just handled
+  useEffect(() => {
+    if (urlVin && urlVin.length === 17 && urlVin !== lastUrlVin.current) {
+      lastUrlVin.current = urlVin;
+      handleDecode(urlVin);
+    }
+  }, [urlVin, handleDecode]);
+
+  const catalogBrand = findCatalogBrand(catalogBrands, selectedMake);
+  const canBrowseParts = Boolean(selectedMake && selectedModel && catalogBrand);
+  const isUncataloguedMake = Boolean(selectedMake && catalogBrands && !catalogBrand);
 
   const handleManualSearch = () => {
-    if (selectedMake && selectedModel) {
-      // For Phase 1, navigate to catalog — full lookup in Phase 2
-      window.location.href = `/catalog/${selectedMake.toLowerCase()}`;
-    }
+    if (!catalogBrand || !selectedModel) return;
+    // Phase 1: navigate to the matching brand page — full lookup in Phase 2
+    window.location.href = `/catalog/${catalogBrand.slug}`;
   };
 
   return (
@@ -120,7 +180,9 @@ export default function VINDecoderPage() {
                 The VIN is a 17-character code printed on the dashboard (driver's side) and door jamb
               </p>
             </div>
+            {/* Remount when the URL VIN changes so the input tracks it */}
             <VINScanner
+              key={urlVin || ''}
               onDecode={handleDecode}
               loading={loading}
               error={error}
@@ -145,11 +207,14 @@ export default function VINDecoderPage() {
                   <select
                     className="input"
                     value={selectedMake}
-                    onChange={e => { setSelectedMake(e.target.value); setSelectedModel(''); }}
+                    onChange={e => handleMakeChange(e.target.value)}
+                    disabled={loadingMakes || makesError}
                   >
-                    <option value="">Select Make…</option>
-                    {POPULAR_MAKES.map(m => (
-                      <option key={m.id} value={m.name}>{m.name}</option>
+                    <option value="">
+                      {loadingMakes ? 'Loading makes…' : makesError ? 'Makes unavailable' : 'Select Make…'}
+                    </option>
+                    {makes.map(m => (
+                      <option key={m.make_id} value={m.make_name}>{m.make_name}</option>
                     ))}
                   </select>
                   <ChevronDown size={16} className={styles.selectChevron} />
@@ -161,7 +226,7 @@ export default function VINDecoderPage() {
                   <select
                     className="input"
                     value={selectedYear}
-                    onChange={e => setSelectedYear(e.target.value)}
+                    onChange={e => handleYearChange(e.target.value)}
                   >
                     <option value="">Any Year</option>
                     {years.slice(0, 30).map(y => (
@@ -181,7 +246,13 @@ export default function VINDecoderPage() {
                     disabled={!selectedMake || loadingModels}
                   >
                     <option value="">
-                      {loadingModels ? 'Loading…' : selectedMake ? 'Select Model…' : 'Select Make first'}
+                      {loadingModels
+                        ? 'Loading…'
+                        : !selectedMake
+                          ? 'Select Make first'
+                          : models.length === 0
+                            ? 'No models found'
+                            : 'Select Model…'}
                     </option>
                     {models.map(m => (
                       <option key={m.model_id} value={m.model_name}>{m.model_name}</option>
@@ -194,12 +265,18 @@ export default function VINDecoderPage() {
             <div className={styles.manualCTA}>
               <button
                 className="btn btn-primary"
-                disabled={!selectedMake || !selectedModel}
+                disabled={!canBrowseParts}
                 onClick={handleManualSearch}
               >
-                Browse Parts for {selectedYear} {selectedMake} {selectedModel}
+                {isUncataloguedMake
+                  ? `Parts catalog for ${selectedMake} coming soon`
+                  : `Browse Parts for ${selectedYear} ${selectedMake} ${selectedModel}`}
               </button>
-              <span className={styles.manualNote}>Full manual lookup available in Phase 2</span>
+              <span className={styles.manualNote}>
+                {isUncataloguedMake
+                  ? `${selectedMake} isn't in the parts catalog yet — coming in Phase 2`
+                  : 'Full manual lookup available in Phase 2'}
+              </span>
             </div>
           </div>
         )}
@@ -207,7 +284,7 @@ export default function VINDecoderPage() {
         {/* ── Result ── */}
         {result && (
           <div className={styles.result}>
-            <VehicleCard result={result} />
+            <VehicleCard result={result} catalogBrands={catalogBrands} />
           </div>
         )}
 

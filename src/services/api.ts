@@ -2,11 +2,10 @@ import type {
   VINDecodeResult,
   BrandsResponse,
   PopularModelsResponse,
-  SearchResponse,
 } from '../types';
 import {
   decodeVin,
-  getAllMakes,
+  getCarMakes,
   getModelsForMake,
   getVehicleYears,
 } from './nhtsa';
@@ -25,7 +24,7 @@ export const vinApi = {
   },
 
   getMakes: async () => {
-    return getAllMakes();
+    return getCarMakes();
   },
 
   getModels: async (makeId: number, year?: number) => {
@@ -42,29 +41,5 @@ export const catalogApi = {
 
   getPopularModels: async (): Promise<PopularModelsResponse> => {
     return popularModelsData as PopularModelsResponse;
-  },
-
-  search: async (q: string, brand?: string, year?: number): Promise<SearchResponse> => {
-    const qLower = q.toLowerCase();
-    const results: SearchResponse['results'] = [];
-
-    for (const b of (brandsData as BrandsResponse).brands) {
-      if (brand && b.slug !== brand) continue;
-      for (const m of b.models) {
-        if (m.name.toLowerCase().includes(qLower) || b.name.toLowerCase().includes(qLower)) {
-          if (year && !m.years.includes(year)) continue;
-          results.push({
-            brand: b.name,
-            brand_slug: b.slug,
-            model: m.name,
-            model_slug: m.slug,
-            years: m.years,
-            category: b.origin,
-          });
-        }
-      }
-    }
-
-    return { query: q, count: results.length, results };
   },
 };

@@ -3,7 +3,6 @@
     {
       "name": "Toyota",
       "slug": "toyota",
-      "logo": "/logos/toyota.svg",
       "origin": "Japanese",
       "popular": true,
       "models": [
@@ -19,7 +18,6 @@
     {
       "name": "Volkswagen",
       "slug": "volkswagen",
-      "logo": "/logos/vw.svg",
       "origin": "European",
       "popular": true,
       "models": [
@@ -34,7 +32,6 @@
     {
       "name": "Ford",
       "slug": "ford",
-      "logo": "/logos/ford.svg",
       "origin": "American",
       "popular": true,
       "models": [
@@ -49,7 +46,6 @@
     {
       "name": "Honda",
       "slug": "honda",
-      "logo": "/logos/honda.svg",
       "origin": "Japanese",
       "popular": true,
       "models": [
@@ -63,7 +59,6 @@
     {
       "name": "BMW",
       "slug": "bmw",
-      "logo": "/logos/bmw.svg",
       "origin": "European",
       "popular": true,
       "models": [
@@ -78,7 +73,6 @@
     {
       "name": "Mercedes-Benz",
       "slug": "mercedes-benz",
-      "logo": "/logos/mercedes.svg",
       "origin": "European",
       "popular": false,
       "models": [
@@ -93,7 +87,6 @@
     {
       "name": "Audi",
       "slug": "audi",
-      "logo": "/logos/audi.svg",
       "origin": "European",
       "popular": false,
       "models": [
@@ -108,7 +101,6 @@
     {
       "name": "Chevrolet",
       "slug": "chevrolet",
-      "logo": "/logos/chevrolet.svg",
       "origin": "American",
       "popular": false,
       "models": [
@@ -122,7 +114,6 @@
     {
       "name": "Nissan",
       "slug": "nissan",
-      "logo": "/logos/nissan.svg",
       "origin": "Japanese",
       "popular": false,
       "models": [
@@ -136,7 +127,6 @@
     {
       "name": "Hyundai",
       "slug": "hyundai",
-      "logo": "/logos/hyundai.svg",
       "origin": "Korean",
       "popular": false,
       "models": [
@@ -150,7 +140,6 @@
     {
       "name": "Kia",
       "slug": "kia",
-      "logo": "/logos/kia.svg",
       "origin": "Korean",
       "popular": false,
       "models": [
@@ -164,7 +153,6 @@
     {
       "name": "Mazda",
       "slug": "mazda",
-      "logo": "/logos/mazda.svg",
       "origin": "Japanese",
       "popular": false,
       "models": [
@@ -177,7 +165,6 @@
     {
       "name": "Subaru",
       "slug": "subaru",
-      "logo": "/logos/subaru.svg",
       "origin": "Japanese",
       "popular": false,
       "models": [
@@ -190,7 +177,6 @@
     {
       "name": "Peugeot",
       "slug": "peugeot",
-      "logo": "/logos/peugeot.svg",
       "origin": "European",
       "popular": false,
       "models": [
@@ -203,7 +189,6 @@
     {
       "name": "Renault",
       "slug": "renault",
-      "logo": "/logos/renault.svg",
       "origin": "European",
       "popular": false,
       "models": [
@@ -216,7 +201,6 @@
     {
       "name": "Porsche",
       "slug": "porsche",
-      "logo": "/logos/porsche.svg",
       "origin": "European",
       "popular": false,
       "models": [
@@ -230,7 +214,6 @@
     {
       "name": "Tesla",
       "slug": "tesla",
-      "logo": "/logos/tesla.svg",
       "origin": "American",
       "popular": false,
       "models": [
@@ -243,7 +226,6 @@
     {
       "name": "Jeep",
       "slug": "jeep",
-      "logo": "/logos/jeep.svg",
       "origin": "American",
       "popular": false,
       "models": [
@@ -256,7 +238,6 @@
     {
       "name": "Land Rover",
       "slug": "land-rover",
-      "logo": "/logos/landrover.svg",
       "origin": "European",
       "popular": false,
       "models": [
@@ -269,7 +250,6 @@
     {
       "name": "Mitsubishi",
       "slug": "mitsubishi",
-      "logo": "/logos/mitsubishi.svg",
       "origin": "Japanese",
       "popular": false,
       "models": [

@@ -40,7 +40,6 @@ export interface VehicleModel {
 export interface Brand {
   name: string;
   slug: string;
-  logo: string;
   origin: 'European' | 'Japanese' | 'American' | 'Korean' | string;
   popular: boolean;
   models: VehicleModel[];
@@ -68,23 +67,6 @@ export interface PopularModel {
 
 export interface PopularModelsResponse {
   popular_models: PopularModel[];
-}
-
-// ─── Search Types ────────────────────────────────────────────────────────────
-
-export interface SearchResult {
-  brand: string;
-  brand_slug: string;
-  model: string;
-  model_slug: string;
-  years: number[];
-  category: string;
-}
-
-export interface SearchResponse {
-  query: string;
-  count: number;
-  results: SearchResult[];
 }
 
 // ─── API Response Wrappers ───────────────────────────────────────────────────
