@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Car, Fuel, Settings, Gauge, MapPin, ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react';
 import { findCatalogBrand } from '../../services/catalog';
 import type { Brand, VINDecodeResult } from '../../types';
@@ -108,9 +109,9 @@ export default function VehicleCard({ result, catalogBrands }: VehicleCardProps)
           Found your vehicle — parts catalog coming in Phase 2
         </p>
         {catalogBrand ? (
-          <a href={`/catalog/${catalogBrand.slug}`} className="btn btn-ghost">
+          <Link to={`/catalog/${catalogBrand.slug}`} className="btn btn-ghost">
             Browse {result.make} Parts
-          </a>
+          </Link>
         ) : (
           <button className="btn btn-ghost" disabled>
             {result.make ? `Parts catalog for ${result.make} coming soon` : 'Parts catalog coming soon'}

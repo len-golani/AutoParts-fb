@@ -125,7 +125,7 @@ export default function Layout() {
           </span>
           <div className={styles.footerLinks}>
             <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="https://github.com/len-golani/AutoParts" target="_blank" rel="noreferrer">Source</a>
+            <a href="https://github.com/len-golani/AutoParts-fb" target="_blank" rel="noreferrer">Source</a>
           </div>
         </div>
       </footer>
