@@ -24,6 +24,15 @@ export default function HomePage() {
       .finally(() => setLoadingModels(false));
   }, []);
 
+  const openModel = (brandSlug: string) => navigate(`/catalog/${brandSlug}`);
+
+  const handleModelKeyDown = (e: React.KeyboardEvent<HTMLDivElement>, brandSlug: string) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openModel(brandSlug);
+    }
+  };
+
   return (
     <div className={styles.page}>
       {/* ── Hero ── */}
@@ -107,7 +116,8 @@ export default function HomePage() {
                 <div
                   key={m.id}
                   className={`card ${styles.modelCard}`}
-                  onClick={() => navigate(`/catalog/${m.brand_slug}`)}
+                  onClick={() => openModel(m.brand_slug)}
+                  onKeyDown={e => handleModelKeyDown(e, m.brand_slug)}
                   role="button"
                   tabIndex={0}
                 >
