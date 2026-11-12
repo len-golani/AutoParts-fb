@@ -34,7 +34,7 @@
 | Storage | Supabase Storage | Free tier |
 | 3D Viewer | Three.js | Free |
 | CAD | FreeCAD + Blender | Free |
-| Hosting | Vercel (static SPA) | Free tier |
+| Hosting | GitHub Pages (live) / Vercel | Free |
 
 > Phase 1 has no server component. VIN decoding calls NHTSA vPIC directly from the browser, and catalog data is bundled from `src/data/` — there is no separate API service or duplicated seed data.
 
@@ -95,6 +95,20 @@ The suite starts or reuses the Vite dev server on `http://127.0.0.1:5173` and us
 
 ## 🌐 Deployment
 
+### GitHub Pages (live)
+
+**Live site:** https://len-golani.github.io/AutoParts-fb/
+
+Deployment is handled by [`.github/workflows/pages.yml`](.github/workflows/pages.yml), which runs on pushes to `main` and on manual dispatch. It:
+
+1. Builds the app for the project path: `npm run build -- --base=/AutoParts-fb/`
+2. Copies `dist/index.html` to `dist/404.html` as the SPA fallback
+3. Uploads `dist/` and deploys it with `actions/deploy-pages`
+
+The React Router basename comes from `import.meta.env.BASE_URL`, so links and assets stay under `/AutoParts-fb/` in production while local development and Vercel keep the `/` base.
+
+GitHub Pages serves `404.html` for direct deep links such as `/AutoParts-fb/catalog`. The response status is 404, but the app shell loads and the route renders client-side.
+
 ### Frontend → Vercel
 
 ```bash
@@ -103,6 +117,40 @@ npm run build
 ```
 
 Build output is the static `dist/` folder. Because routing is client-side, configure a rewrite from `/*` to `/index.html` so deep links resolve.
+
+---
+
+## 🔁 Continuous Integration
+
+The [smoke-test workflow](.github/workflows/smoke-tests.yml) runs on pushes and pull requests, plus manual dispatches.
+
+### Push and pull request jobs
+
+- **Offline smoke suite** — `npm run test:e2e` with Playwright Chromium. NHTSA vPIC and Google Fonts requests are stubbed, so the suite makes no external network requests.
+- **Typecheck and lint** — `npx tsc -b` and `npm run lint`.
+- **Production build** — `npm run build` to catch bundling failures.
+
+### Manual live VIN job
+
+Dispatching the workflow manually runs the VIN decoder tests against the real NHTSA API with `LIVE_NHTSA=1`:
+
+```bash
+LIVE_NHTSA=1 npm run test:e2e -- --grep "VIN decoder"
+```
+
+The live job installs Playwright Chromium and does not run on push or pull request events.
+
+### Concurrency and failure artifacts
+
+Superseded runs on the same branch or pull request are cancelled automatically. The workflow uses:
+
+```yaml
+concurrency:
+  group: smoke-tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+```
+
+When a run fails, it uploads the HTML Playwright report and test results as artifacts (`playwright-report-offline` or `playwright-report-live-vin`). The bundle includes `playwright-report/` and `test-results/`, retained for 7 days. Traces are retained on failure (`trace: 'retain-on-failure'`), so a failed test's `trace.zip` can be inspected with `npx playwright show-trace <path>`.
 
 ---
 
