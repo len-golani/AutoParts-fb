@@ -202,9 +202,10 @@ export default function VINDecoderPage() {
             </div>
             <div className={styles.manualGrid}>
               <div>
-                <label className={styles.label}>Make</label>
+                <label className={styles.label} htmlFor="manual-make">Make</label>
                 <div className={styles.selectWrapper}>
                   <select
+                    id="manual-make"
                     className="input"
                     value={selectedMake}
                     onChange={e => handleMakeChange(e.target.value)}
@@ -221,9 +222,10 @@ export default function VINDecoderPage() {
                 </div>
               </div>
               <div>
-                <label className={styles.label}>Year</label>
+                <label className={styles.label} htmlFor="manual-year">Year</label>
                 <div className={styles.selectWrapper}>
                   <select
+                    id="manual-year"
                     className="input"
                     value={selectedYear}
                     onChange={e => handleYearChange(e.target.value)}
@@ -237,9 +239,10 @@ export default function VINDecoderPage() {
                 </div>
               </div>
               <div>
-                <label className={styles.label}>Model</label>
+                <label className={styles.label} htmlFor="manual-model">Model</label>
                 <div className={styles.selectWrapper}>
                   <select
+                    id="manual-model"
                     className="input"
                     value={selectedModel}
                     onChange={e => setSelectedModel(e.target.value)}

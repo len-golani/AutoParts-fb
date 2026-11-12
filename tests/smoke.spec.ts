@@ -263,3 +263,60 @@ test.describe('mobile menu', () => {
     await expect(page.locator('[class*="mobileMenu"]')).toHaveCount(0);
   });
 });
+
+test.describe('accessibility', () => {
+  test.beforeEach(async ({ page }) => {
+    await stubNhtsa(page);
+  });
+
+  test('header and VIN inputs have accessible labels', async ({ page }) => {
+    await page.goto('/vin');
+
+    await expect(page.getByRole('search', { name: 'Vehicle search' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Search by VIN or model' })).toBeVisible();
+    await expect(
+      page.getByRole('textbox', { name: 'Vehicle Identification Number (VIN)' }),
+    ).toBeVisible();
+  });
+
+  test('manual selects are associated with their visible labels', async ({ page }) => {
+    await page.goto('/vin');
+    await page.getByRole('button', { name: /Manual Selection/ }).click();
+
+    await expect(page.getByLabel('Make', { exact: true })).toHaveAttribute('id', 'manual-make');
+    await expect(page.getByLabel('Year', { exact: true })).toHaveAttribute('id', 'manual-year');
+    await expect(page.getByLabel('Model', { exact: true })).toHaveAttribute('id', 'manual-model');
+  });
+
+  test('announces VIN errors and links them to the input', async ({ page }) => {
+    await page.goto('/vin');
+    const vinInput = page.getByRole('textbox', {
+      name: 'Vehicle Identification Number (VIN)',
+    });
+
+    await vinInput.fill(BOGUS_VIN);
+    await page.getByRole('button', { name: 'Decode VIN' }).click();
+
+    const error = page.getByRole('alert');
+    await expect(error).toContainText(/NHTSA could not decode this VIN/i);
+    await expect(vinInput).toHaveAttribute('aria-invalid', 'true');
+    await expect(vinInput).toHaveAttribute('aria-describedby', 'vin-error');
+    await expect(page.locator('#vin-error')).toHaveText(/NHTSA could not decode this VIN/i);
+  });
+
+  test('mobile menu exposes its expanded state', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    const toggle = page.getByRole('button', { name: 'Toggle menu' });
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(toggle).toHaveAttribute('aria-controls', 'mobile-menu');
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('#mobile-menu')).toBeVisible();
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  });
+});

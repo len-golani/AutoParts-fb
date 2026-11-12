@@ -138,6 +138,9 @@ export default function VINScanner({ onDecode, loading, error, initialVin = '' }
             ref={inputRef}
             type="text"
             className={`${styles.vinInput} ${error ? styles.vinInputError : ''} ${isValid ? styles.vinInputValid : ''}`}
+            aria-label="Vehicle Identification Number (VIN)"
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? 'vin-error' : undefined}
             value={vin}
             onChange={handleInput}
             placeholder={`Try: ${SAMPLE_VINS[hintIndex]}`}
@@ -174,7 +177,7 @@ export default function VINScanner({ onDecode, loading, error, initialVin = '' }
 
       {/* Error */}
       {error && !isActive && (
-        <div className={styles.error}>
+        <div id="vin-error" role="alert" className={styles.error}>
           <AlertCircle size={15} />
           {error}
         </div>

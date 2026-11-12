@@ -36,11 +36,17 @@ export default function Layout() {
           </Link>
 
           {/* Quick search */}
-          <form onSubmit={handleQuickSearch} className={styles.headerSearch}>
+          <form
+            onSubmit={handleQuickSearch}
+            className={styles.headerSearch}
+            role="search"
+            aria-label="Vehicle search"
+          >
             <Search size={16} className={styles.searchIcon} />
             <input
               type="text"
               className={styles.searchInput}
+              aria-label="Search by VIN or model"
               placeholder="VIN or search model..."
               value={quickVin}
               onChange={e => setQuickVin(e.target.value)}
@@ -85,6 +91,8 @@ export default function Layout() {
             className={styles.mobileToggle}
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
           >
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -92,13 +100,19 @@ export default function Layout() {
 
         {/* Mobile menu */}
         {menuOpen && (
-          <div className={styles.mobileMenu}>
+          <div id="mobile-menu" className={styles.mobileMenu}>
             <NavLink to="/" onClick={() => setMenuOpen(false)}>Home</NavLink>
             <NavLink to="/vin" onClick={() => setMenuOpen(false)}>VIN Decoder</NavLink>
             <NavLink to="/catalog" onClick={() => setMenuOpen(false)}>Catalog</NavLink>
-            <form onSubmit={handleQuickSearch} className={styles.mobileSearch}>
+            <form
+              onSubmit={handleQuickSearch}
+              className={styles.mobileSearch}
+              role="search"
+              aria-label="Mobile vehicle search"
+            >
               <input
                 className="input"
+                aria-label="Search by VIN or model"
                 placeholder="Search VIN or model..."
                 value={quickVin}
                 onChange={e => setQuickVin(e.target.value)}
