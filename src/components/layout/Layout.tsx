@@ -13,9 +13,11 @@ export default function Layout() {
     if (quickVin.trim().length === 17) {
       navigate(`/vin?vin=${quickVin.trim().toUpperCase()}`);
       setQuickVin('');
+      setMenuOpen(false);
     } else if (quickVin.trim().length > 0) {
       navigate(`/catalog?q=${encodeURIComponent(quickVin.trim())}`);
       setQuickVin('');
+      setMenuOpen(false);
     }
   };
 

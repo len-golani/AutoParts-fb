@@ -8,11 +8,23 @@ import styles from './CatalogPage.module.css';
 const REGIONS = ['All', 'European', 'Japanese', 'American', 'Korean'];
 
 export default function CatalogPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState(searchParams.get('q') || '');
   const [region, setRegion] = useState('All');
+  const query = searchParams.get('q') || '';
+
+  const setQuery = (value: string) => {
+    setSearchParams(
+      prev => {
+        const next = new URLSearchParams(prev);
+        if (value) next.set('q', value);
+        else next.delete('q');
+        return next;
+      },
+      { replace: true },
+    );
+  };
 
   useEffect(() => {
     catalogApi.getBrands()
